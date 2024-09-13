@@ -1,0 +1,9 @@
+SELECT    LPAD (' ', 10 * (LEVEL - 1)) || org.name hierarchy,
+          org.organization_id
+  FROM    hr_all_organization_units org, per_org_structure_elements pose
+ WHERE    1 = 1 
+      AND org.organization_id = pose.organization_id_child
+--and org.name like 'org name'
+START WITH pose.organization_id_parent = 123 -- Orgnization of parent id -- provide the id from which level the downward hierarchy should be displayed
+CONNECT BY PRIOR pose.organization_id_child = pose.organization_id_parent
+ORDER SIBLINGS BY org.location_id, pose.organization_id_child;
