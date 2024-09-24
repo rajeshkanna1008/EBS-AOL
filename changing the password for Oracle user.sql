@@ -1,19 +1,17 @@
+SET SERVEROUTPUT ON
 DECLARE
-   v_user_name          VARCHAR2 (100) := 'TEST_USER';
-   v_new_password       VARCHAR2 (100) := :NEWPASSWORD;
-   v_status             BOOLEAN        := NULL;
+  v_user_name    VARCHAR2(30):= UPPER('5002');
+  v_new_password VARCHAR2(30):= 'Welcome@1';
+  v_status       BOOLEAN;
 BEGIN
-   v_status := fnd_user_pkg.changepassword (v_user_name, v_new_password);
-
-  COMMIT;
-   DBMS_OUTPUT.put_line (   'Password is changed successfully for the user '
-                         || v_user_name
-                        );
-EXCEPTION
-   WHEN OTHERS
-   THEN
-      DBMS_OUTPUT.put_line
-         (   'Error encountered while setting new password to the user and the error is '
-          || SQLERRM
-         );
+  v_status   := fnd_user_pkg.ChangePassword ( username => v_user_name, 
+                                              newpassword => v_new_password 
+                                            );
+  IF v_status  THEN
+    dbms_output.put_line ('The password reset successfully for the User:'||v_user_name);
+    COMMIT;
+  ELSE
+    DBMS_OUTPUT.put_line ('Unable to reset password due to'||SQLCODE||' '||SUBSTR(SQLERRM, 1, 100));
+    ROLLBACK;
+  END IF;
 END;
